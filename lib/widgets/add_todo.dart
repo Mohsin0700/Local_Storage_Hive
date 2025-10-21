@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AddTodo extends StatelessWidget {
+  final TextEditingController? controller;
   final void Function()? onPressed;
-  const AddTodo({super.key, this.onPressed});
+  const AddTodo({super.key, this.controller, this.onPressed});
 
   @override
   Widget build(BuildContext context) {

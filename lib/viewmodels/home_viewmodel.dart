@@ -4,8 +4,10 @@ import 'package:todo_local/widgets/add_todo.dart';
 
 class HomeViewmodel extends ChangeNotifier {
   late Box _myBox;
-  late List<String> todoList;
-  final TextEditingController _taskController = TextEditingController();
+  List<String> todoList = []; // ✅ Fixed: Initialize with empty list
+  final TextEditingController taskController =
+      TextEditingController(); // ✅ Fixed: Made public
+
   void init() async {
     print('Viewmodel initialized');
 
@@ -21,24 +23,45 @@ class HomeViewmodel extends ChangeNotifier {
     return showDialog(
       context: context,
       builder: (context) {
-        return AddTodo(onPressed: () => addTask(_taskController.text));
+        return AddTodo(
+          controller: taskController, // ✅ Fixed: Pass controller
+          onPressed: () {
+            addTask(taskController.text, context); // ✅ Fixed: Pass context
+          },
+        );
       },
     );
   }
 
-  void addTask(String task) {
+  void addTask(String task, BuildContext context) {
     print('Add Task Button Called');
+    if (task.trim().isEmpty) return; // ✅ Added: Validation
+
     todoList.add(task);
     _myBox.put('todos', todoList);
-    _taskController.clear();
+    taskController.clear();
+    Navigator.of(context).pop(); // ✅ Fixed: Close dialog
     notifyListeners();
   }
 
   void getTask() {
     if (_myBox.containsKey('todos')) {
-      todoList = _myBox.get('todos');
+      // ✅ Fixed: Proper type casting and moved else block
+      final dynamic data = _myBox.get('todos');
+      if (data is List) {
+        todoList = List<String>.from(data);
+      } else {
+        todoList = [];
+      }
+    } else {
+      todoList = [];
     }
-    todoList = [];
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    taskController.dispose();
+    super.dispose();
   }
 }

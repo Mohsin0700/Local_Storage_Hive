@@ -16,7 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      homeViewmodel = Provider.of<HomeViewmodel>(context, listen: false);
+      homeViewmodel = Provider.of<HomeViewmodel>(context, listen: false)
+        ..init();
       homeViewmodel.init();
     });
   }
