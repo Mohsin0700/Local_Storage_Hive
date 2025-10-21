@@ -10,6 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _isWidgetBuilt = false;
   late HomeViewmodel homeViewmodel;
 
   @override
@@ -19,6 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
       homeViewmodel = Provider.of<HomeViewmodel>(context, listen: false)
         ..init();
       homeViewmodel.init();
+      _isWidgetBuilt = true;
+      setState(() {});
     });
   }
 
@@ -31,16 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: Icon(Icons.android_sharp),
         title: Text('Todo Hive'),
       ),
-      body: ListView.builder(
-        itemCount: homeViewmodel.todoList.length,
-        itemBuilder: (context, index) {
-          return Card(
-            child: Column(
-              children: [Text('Task ${homeViewmodel.todoList[index]}')],
-            ),
-          );
-        },
-      ),
+      body: _isWidgetBuilt
+          ? ListView.builder(
+              itemCount: homeViewmodel.todoList.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: Column(
+                    children: [Text('Task ${homeViewmodel.todoList[index]}')],
+                  ),
+                );
+              },
+            )
+          : Center(child: CircularProgressIndicator()),
       floatingActionButton: ElevatedButton.icon(
         onPressed: () {
           homeViewmodel.showAddTaskDialog(context);
