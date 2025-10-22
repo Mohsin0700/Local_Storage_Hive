@@ -10,49 +10,83 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isWidgetBuilt = false;
-  late HomeViewmodel homeViewmodel;
-
+  late Color delIconColor = Colors.grey[600]!;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      homeViewmodel = Provider.of<HomeViewmodel>(context, listen: false)
-        ..init();
-      homeViewmodel.init();
-      _isWidgetBuilt = true;
-      setState(() {});
+      // init sirf ek dafa, aur context safe hone ke baad
+      final vm = Provider.of<HomeViewmodel>(context, listen: false);
+      vm.init();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     print('Home View Build');
-
     return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.android_sharp),
-        title: Text('Todo Hive'),
+        title: Text('Offline Todo App'),
       ),
-      body: _isWidgetBuilt
-          ? ListView.builder(
-              itemCount: homeViewmodel.todoList.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: Column(
-                    children: [Text('Task ${homeViewmodel.todoList[index]}')],
+      body: Consumer<HomeViewmodel>(
+        builder: (context, vm, child) {
+          return ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: vm.todoList.length,
+            itemBuilder: (context, index) {
+              final task = vm.todoList[index];
+              return Card(
+                child: ListTile(
+                  title: Text(task['task']),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          vm.toggleTaskDone(index);
+                        },
+                        icon: Icon(
+                          task['isDone']
+                              ? Icons.check_box_outlined
+                              : Icons.check_box_outline_blank,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      IconButton(
+                        color: Colors.red,
+                        onPressed: () {
+                          vm.deleteTask(index);
+                        },
+                        icon: Icon(Icons.delete),
+                      ),
+                    ],
                   ),
-                );
-              },
-            )
-          : Center(child: CircularProgressIndicator()),
+                ),
+              );
+            },
+          );
+        },
+      ),
       floatingActionButton: ElevatedButton.icon(
         onPressed: () {
-          homeViewmodel.showAddTaskDialog(context);
+          Provider.of<HomeViewmodel>(
+            context,
+            listen: false,
+          ).showAddTaskDialog(context);
         },
         label: Text('Task'),
         icon: Icon(Icons.add),
       ),
+      persistentFooterButtons: [
+        ElevatedButton.icon(
+          icon: Icon(Icons.clear_all),
+          onPressed: () {
+            Provider.of<HomeViewmodel>(context, listen: false).clearAllTasks();
+          },
+          label: Text('Clear All Tasks'),
+        ),
+      ],
     );
   }
 }

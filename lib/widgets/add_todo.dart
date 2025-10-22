@@ -10,6 +10,7 @@ class AddTodo extends StatelessWidget {
     return AlertDialog(
       title: Text('Add Todo'),
       content: TextField(
+        controller: controller,
         decoration: InputDecoration(hintText: 'Enter todo title'),
       ),
       actions: [
