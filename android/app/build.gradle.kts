@@ -29,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.todo_local"
+        applicationId = "com.mohsin.offlinetask"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -49,7 +49,7 @@ android {
         release {
             signingConfig = signingConfigs.getByName("release")
             // Explicitly disable shrinking
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             isShrinkResources = false
         }
     }

@@ -1,4 +1,4 @@
-package com.example.todo_local
+package com.mohsin.offlinetask
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -14,12 +14,8 @@ class HomeViewmodel extends ChangeNotifier {
     if (_initialized) return;
     _initialized = true;
 
-    print('Viewmodel initialized');
-
     _myBox = await Hive.openBox('myBox');
-    print('Hive Box initialized');
 
-    print('Loading Tasks');
     await _loadTasksFromBox();
     notifyListeners();
   }
@@ -29,22 +25,17 @@ class HomeViewmodel extends ChangeNotifier {
 
     if (!_myBox.containsKey('todos')) {
       todoList = [];
-      print('No todos key found, starting with empty list.');
       return;
     }
 
     final dynamic data = _myBox.get('todos');
-    print('Raw data from box: $data (type: ${data.runtimeType})');
 
     // Normalize into List<Map<String, dynamic>>
     try {
       todoList = _normalizeToTodoList(data);
-      print('Normalized todoList: $todoList');
       // Persist normalized format back to Hive (migration)
       await _myBox.put('todos', todoList);
-      print('Migrated/stored normalized todos back to Hive.');
-    } catch (e, st) {
-      print('Failed to normalize todos from Hive: $e\n$st');
+    } catch (e) {
       // fallback to empty
       todoList = [];
     }
@@ -112,7 +103,6 @@ class HomeViewmodel extends ChangeNotifier {
 
   // Helper method to add task
   void addTask(String task, BuildContext context) {
-    print('Add Task Button Called');
     if (task.trim().isEmpty) return;
 
     todoList.add({'task': task, 'isDone': false});
