@@ -15,7 +15,7 @@ val keystoreProperties = Properties().apply {
 }
 
 android {
-    namespace = "com.example.todo_local"
+    namespace = "com.mohsin.offlinetask"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
