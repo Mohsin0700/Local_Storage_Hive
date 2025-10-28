@@ -17,7 +17,9 @@ class _Handler {
   });
 }
 
+// Using Mixin to observe app lifecycle changes
 class LifecycleManager with WidgetsBindingObserver {
+  // Singleton
   static final LifecycleManager _instance = LifecycleManager._internal();
   factory LifecycleManager() => _instance;
   LifecycleManager._internal();
@@ -26,10 +28,6 @@ class LifecycleManager with WidgetsBindingObserver {
 
   void init() {
     WidgetsBinding.instance.addObserver(this);
-  }
-
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
   }
 
   void registerHandler({
@@ -55,7 +53,7 @@ class LifecycleManager with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    debugPrint('LifecycleManager: state -> $state');
+    print('LifecycleManager: state -> $state');
 
     switch (state) {
       case AppLifecycleState.paused:
@@ -109,5 +107,9 @@ class LifecycleManager with WidgetsBindingObserver {
         ),
       );
     }
+  }
+
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
   }
 }

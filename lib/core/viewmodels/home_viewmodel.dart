@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:todo_local/core/services/lifecycle_manager_service.dart';
 import 'package:todo_local/ui/widgets/add_todo.dart';
+import 'package:todo_local/ui/widgets/status_dialog.dart';
 
 class HomeViewmodel extends ChangeNotifier {
   late Box _myBox;
@@ -18,6 +20,24 @@ class HomeViewmodel extends ChangeNotifier {
 
     await _loadTasksFromBox();
     notifyListeners();
+    // Lifecycle Management
+    LifecycleManager().registerHandler(
+      name: 'home-viewmodel',
+      onPause: () async {
+        await saveAllTasksToHive();
+      },
+      onResume: () async {
+        await _loadTasksFromBox();
+        notifyListeners();
+      },
+      onDetach: () async {
+        await Hive.close();
+      },
+    );
+  }
+
+  Future<void> saveAllTasksToHive() async {
+    await _myBox.put('todos', todoList);
   }
 
   Future<void> _loadTasksFromBox() async {
@@ -102,13 +122,19 @@ class HomeViewmodel extends ChangeNotifier {
   }
 
   // Helper method to add task
-  void addTask(String task, BuildContext context) {
+  void addTask(String task, BuildContext context) async {
     if (task.trim().isEmpty) return;
 
     todoList.add({'task': task, 'isDone': false});
     _myBox.put('todos', todoList);
     taskController.clear();
     Navigator.of(context).pop();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const StatusDialog(isSuccess: true);
+      },
+    );
     notifyListeners();
   }
 
