@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
-import 'package:todo_local/widgets/add_todo.dart';
+import 'package:todo_local/ui/widgets/add_todo.dart';
 
 class HomeViewmodel extends ChangeNotifier {
   late Box _myBox;
