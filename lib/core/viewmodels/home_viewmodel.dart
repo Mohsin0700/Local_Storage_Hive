@@ -124,17 +124,32 @@ class HomeViewmodel extends ChangeNotifier {
   // Helper method to add task
   void addTask(String task, BuildContext context) async {
     if (task.trim().isEmpty) return;
-
+    bool isDuplicate = todoList.any(
+      (element) =>
+          element['task'].toString().toLowerCase() == task.trim().toLowerCase(),
+    );
+    if (isDuplicate) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(milliseconds: 500),
+          backgroundColor: Colors.redAccent,
+          content: Text('Task Already Exists'),
+        ),
+      );
+      return;
+    }
     todoList.add({'task': task, 'isDone': false});
     _myBox.put('todos', todoList);
     taskController.clear();
     Navigator.of(context).pop();
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const StatusDialog(isSuccess: true);
-      },
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(milliseconds: 500),
+        backgroundColor: Colors.greenAccent,
+        content: Text('Task Added'),
+      ),
     );
+
     notifyListeners();
   }
 
@@ -143,10 +158,17 @@ class HomeViewmodel extends ChangeNotifier {
     _loadTasksFromBox().then((_) => notifyListeners());
   }
 
-  void deleteTask(int index) {
+  void deleteTask(int index, BuildContext context) {
     if (index < 0 || index >= todoList.length) return;
     todoList.removeAt(index);
     _myBox.put('todos', todoList);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(milliseconds: 500),
+        backgroundColor: Colors.redAccent,
+        content: Text('Task Deleted'),
+      ),
+    );
     notifyListeners();
   }
 

@@ -166,7 +166,13 @@ class _HomeScreenState extends State<HomeScreen> {
     bool isMobile,
   ) {
     final titleStyle = isMobile
-        ? TextStyle(fontSize: 16)
+        ? TextStyle(
+            fontSize: 16,
+            decoration: task['isDone'] == true
+                ? TextDecoration.lineThrough
+                : TextDecoration.none,
+            fontWeight: FontWeight.w600,
+          )
         : TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
 
     // Larger tap targets for tablet
@@ -203,8 +209,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text(task['due'].toString()),
                 ),
               IconButton(
-                onPressed: () => vm.deleteTask(index),
-                icon: Icon(Icons.delete),
+                onPressed: () => vm.deleteTask(index, context),
+                icon: Icon(Icons.delete, color: Colors.red),
                 color: delIconColor,
                 iconSize: iconSize,
               ),
